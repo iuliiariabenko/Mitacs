@@ -12,6 +12,8 @@ CREATE TABLE experiment (
     description TEXT,
     operator TEXT,
     organization TEXT,
+    project_code TEXT,
+    location TEXT,
     start_date DATETIME NOT NULL,
     end_date DATETIME,
     notes TEXT
@@ -36,6 +38,12 @@ CREATE TABLE sample (
     batch_id TEXT,
     contamination_note TEXT,
 
+    concentration_value REAL,
+    concentration_unit TEXT,
+    replicate_id TEXT,
+
+    sample_semantics_json TEXT,
+
     FOREIGN KEY (experiment_id)
         REFERENCES experiment(experiment_id)
         ON DELETE CASCADE
@@ -56,11 +64,20 @@ CREATE TABLE measurement (
 
     technique TEXT NOT NULL,             -- UV, Raman, FTIR, Fluorescence
     instrument TEXT,                     -- model / serial
-    operator TEXT,
+    mode TEXT,                      -- Scan / ATR / point / map
 
+    operator TEXT,
     measurement_time DATETIME NOT NULL,
+
     temperature REAL,                    -- °C
     pressure REAL,                       -- optional
+
+    software_name TEXT,
+    software_version TEXT,
+
+    instrument_metadata_json TEXT,
+    measurement_context_json TEXT,
+
     notes TEXT,
 
     FOREIGN KEY (sample_id)
@@ -84,7 +101,8 @@ CREATE TABLE spectrum_file (
     spectrum_id INTEGER PRIMARY KEY AUTOINCREMENT,
     measurement_id INTEGER NOT NULL,
 
-    spectrum_type TEXT NOT NULL,          -- UV, Raman, FTIR, Fluorescence
+    spectrum_type TEXT NOT NULL,          -- point / map / scan / kinetics !!!
+    file_name TEXT NOT NULL,
     file_path TEXT NOT NULL,              -- ./data/exp01/sampleA_uv.csv
     file_format TEXT DEFAULT 'CSV',
 
@@ -100,6 +118,8 @@ CREATE TABLE spectrum_file (
     acquisition_time REAL,                -- seconds
     laser_wavelength REAL,                -- Raman
     excitation_wavelength REAL,           -- UV/Fluo
+
+    metadata_json TEXT,                   -- Вот тут надо поразмыслить
 
     FOREIGN KEY (measurement_id)
         REFERENCES measurement(measurement_id)
@@ -133,6 +153,8 @@ CREATE TABLE analysis_run (
 
     algorithm_name TEXT NOT NULL,      -- BaselineCorr, PCA, ASTM_DXXX
     algorithm_version TEXT,
+    preprocess_pipeline TEXT,
+    feature_table_ref TEXT NOT NULL,
     parameters_json TEXT,
     executed_at DATETIME NOT NULL,
 
