@@ -132,6 +132,92 @@ CREATE INDEX idx_spectrum_measurement
 CREATE INDEX idx_spectrum_type
     ON spectrum_file(spectrum_type);
 
+-- ============================================================
+-- RAMAN
+-- ============================================================
+
+CREATE TABLE raman(
+    raman_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    measurement_id INTEGER NOT NULL,
+
+    laser_nm REAL,
+    grating_gmm INTEGER,
+    objective TEXT,
+    slit_um REAL,
+    hole_um REAL,
+    filter_percent REAL,
+
+    acq_time_s REAL,
+    accumulations INTEGER,
+
+    range_cm1_min REAL,
+    range_cm1_max REAL,
+    spectral_res_cm1 REAL,
+
+    stage_x_um REAL,
+    stage_y_um REAL,
+    stage_z_um REAL,
+
+    corrections_flags_json TEXT,
+
+    FOREIGN KEY (measurement_id)
+        REFERENCES measurement(measurement_id)
+        ON DELETE CASCADE
+);
+
+-- ============================================================
+-- UV-VIS
+-- ============================================================
+
+CREATE TABLE uvvis (
+    uvvis_id = INTEGER PRIMARY KEY AUTOINCREMENT,
+    measurement_id INTEGER NOT NULL,
+
+    uvvis_mode TEXT,
+    x_unit TEXT,
+    y_unit TEXT,
+
+    wl_start_nm REAL,
+    wl_stop_nm REAL,
+    sbw_nm REAL,
+
+    ave_time_s REAL,
+    data_interval_nm REAL,
+    scan_rate_nm_min REAL,
+
+    beam_mode TEXT,
+    baseline_correction INTEGER,
+    source_changeover_nm REAL,
+
+    method_log TEXT,
+
+    FOREIGN KEY (measurement_id)
+        REFERENCES measurement(measurement_id)
+        ON DELETE CASCADE
+);
+
+-- ============================================================
+-- FTIR
+-- ============================================================
+
+CREATE TABLE ftir (
+    ftir = INTEGER PRIMARY KEY AUTOINCREMENT,
+    measurement_id INTEGER NOT NULL,
+
+    ftir_accessory TEXT,
+    x_unit TEXT,
+    y_unit TEXT,
+
+    background_id TEXT,
+    method_name TEXT,
+    energy_value REAL,
+
+    FOREIGN KEY (measurement_id)
+        REFERENCES measurement(measurement_id)
+        ON DELETE CASCADE
+);
+
+
 CREATE TABLE test_sequence (
     sequence_id INTEGER PRIMARY KEY AUTOINCREMENT,
     experiment_id INTEGER NOT NULL,
