@@ -1,0 +1,6 @@
+FROM measurement_point mp
+JOIN fuel_parameter_estimate e ON e.measurement_id = mp.mp_id
+JOIN fuel_test_result r ON r.estimate_id = e.estimate_id
+JOIN fuel_test_definition t ON t.test_id = r.test_id
+JOIN fuel_parameter p ON p.parameter_id = t.parameter_id
+GROUP BY mp.mp_id, mp.timestamp;

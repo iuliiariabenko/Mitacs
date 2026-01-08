@@ -1,0 +1,54 @@
+SELECT
+    mp.mp_id,
+    mp.timestamp,
+
+    -- Aromatics
+    MAX(CASE WHEN p.name = 'aromatics_total' THEN r.p_exceed END) AS aromatics_p,
+    MAX(CASE WHEN p.name = 'aromatics_total' THEN r.test_bool END) AS aromatics_tf,
+
+    -- PAH
+    MAX(CASE WHEN p.name = 'pah' THEN r.p_exceed END) AS pah_p,
+    MAX(CASE WHEN p.name = 'pah' THEN r.test_bool END) AS pah_tf,
+
+    -- Olefins
+    MAX(CASE WHEN p.name = 'olefins' THEN r.p_exceed END) AS olefins_p,
+    MAX(CASE WHEN p.name = 'olefins' THEN r.test_bool END) AS olefins_tf,
+
+    -- Oxygenates
+    MAX(CASE WHEN p.name = 'oxygenates' THEN r.p_exceed END) AS oxygenates_p,
+    MAX(CASE WHEN p.name = 'oxygenates' THEN r.test_bool END) AS oxygenates_tf,
+
+    -- Coke precursors
+    MAX(CASE WHEN p.name = 'coke_precursors' THEN r.p_exceed END) AS coke_p,
+    MAX(CASE WHEN p.name = 'coke_precursors' THEN r.test_bool END) AS coke_tf,
+
+    -- Oxidative potential
+    MAX(CASE WHEN p.name = 'oxidative_potential' THEN r.p_exceed END) AS oxidative_p,
+    MAX(CASE WHEN p.name = 'oxidative_potential' THEN r.test_bool END) AS oxidative_tf,
+
+    -- Radical activity
+    MAX(CASE WHEN p.name = 'radical_activity' THEN r.p_exceed END) AS radical_p,
+    MAX(CASE WHEN p.name = 'radical_activity' THEN r.test_bool END) AS radical_tf,
+
+    -- Resins
+    MAX(CASE WHEN p.name = 'resins' THEN r.p_exceed END) AS resins_p,
+    MAX(CASE WHEN p.name = 'resins' THEN r.test_bool END) AS resins_tf,
+
+    -- Blend compatibility
+    MAX(CASE WHEN p.name = 'blend_compatibility' THEN r.p_exceed END) AS blend_p,
+    MAX(CASE WHEN p.name = 'blend_compatibility' THEN r.test_bool END) AS blend_tf,
+
+    -- Spec noncompliance
+    MAX(CASE WHEN p.name = 'spec_noncompliance' THEN r.p_exceed END) AS spec_p,
+    MAX(CASE WHEN p.name = 'spec_noncompliance' THEN r.test_bool END) AS spec_tf,
+
+    -- Operational failure
+    MAX(CASE WHEN p.name = 'operational_failure' THEN r.p_exceed END) AS failure_p,
+    MAX(CASE WHEN p.name = 'operational_failure' THEN r.test_bool END) AS failure_tf
+
+FROM measurement_point mp
+JOIN fuel_parameter_estimate e ON e.measurement_id = mp.mp_id
+JOIN fuel_test_result r ON r.estimate_id = e.estimate_id
+JOIN fuel_test_definition t ON t.test_id = r.test_id
+JOIN fuel_parameter p ON p.parameter_id = t.parameter_id
+GROUP BY mp.mp_id, mp.timestamp;

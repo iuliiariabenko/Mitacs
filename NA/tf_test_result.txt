@@ -1,0 +1,13 @@
+CREATE TABLE tf_test_result (
+    id              SERIAL PRIMARY KEY,
+    measurement_id  INT REFERENCES measurement_point(mp_id),
+    test_name       TEXT NOT NULL,              -- например coking_alarm_v1
+    test_value      BOOLEAN NOT NULL,           -- TrueFalse (raw)
+    prior_pc        DOUBLE PRECISION NOT NULL,  -- P(C)
+    sensitivity     DOUBLE PRECISION NOT NULL,  -- Se
+    specificity     DOUBLE PRECISION NOT NULL,  -- Sp
+    posterior_pc    DOUBLE PRECISION NOT NULL,  -- P(CT)
+    decision_class  TEXT NOT NULL,              -- SAFEWARNALARM
+    model_version   TEXT,
+    created_at      TIMESTAMP DEFAULT NOW()
+);

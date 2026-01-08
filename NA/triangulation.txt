@@ -1,0 +1,39 @@
+def triangulation(x, y):
+    """
+    Perform a parabolic sub-sample refinement of the location and amplitude of
+    the global maximum.
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Abscissa values (typically wavelength in nm).
+    y : np.ndarray
+        Ordinate values (typically power in linear units).
+
+    Returns
+    -------
+    center : float
+        Refined peak position in the same units as x.
+    peak_value : float
+        Refined peak amplitude in the same units as y.
+    """
+    idx = int(y.argmax())
+    if idx <= 0 or idx >= len(y) - 1:
+        return float(x[idx]), float(y[idx])
+
+    s_minus = y[idx - 1]
+    s0 = y[idx]
+    s_plus = y[idx + 1]
+
+    denom = (s_minus + s_plus - 2.0 * s0)
+    if denom == 0:
+        return float(x[idx]), float(s0)
+
+    correction = (s_minus - s_plus) / denom / 2.0
+    dx = (x[idx] - x[idx - 1]) * correction
+    center = x[idx] + dx
+
+    peak_offset = (s0 - s_minus) * correction
+    peak_value = s0 + peak_offset
+
+    return float(center), float(peak_value)

@@ -1,0 +1,20 @@
+def bayes_posterior(tf: bool, prior: float, se: float, sp: float) -> float:
+    """
+    tf: True (test positive) or False (test negative)
+    prior: P(C)
+    se: sensitivity = P(T+|C)
+    sp: specificity = P(T-|~C)
+    returns: P(C|T)
+    """
+    prior = max(1e-12, min(1-1e-12, prior))
+    se    = max(1e-12, min(1-1e-12, se))
+    sp    = max(1e-12, min(1-1e-12, sp))
+
+    if tf:  # T+
+        num = se * prior
+        den = se * prior + (1 - sp) * (1 - prior)
+    else:   # T-
+        num = (1 - se) * prior
+        den = (1 - se) * prior + sp * (1 - prior)
+
+    return num / (den + 1e-12)
